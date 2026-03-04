@@ -1,0 +1,7 @@
+/**
+ * Central configuration for the frontend application.
+ * You can change the backend URL here or in the .env file.
+ */
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:6001";
+
+export default API_URL;
