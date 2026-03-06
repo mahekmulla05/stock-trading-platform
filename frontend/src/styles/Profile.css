@@ -1,0 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary-blue: #3259e8;
+    --primary-hover: #2646c2;
+    --bg-light: #f8fafc;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --white: #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --border-color: #e2e8f0;
+    --success-green: #10b981;
+    --error-red: #ef4444;
+}
+
+.profilePage {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 120px 5% 50px;
+    background-color: var(--bg-light);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* User Info Card Styling */
+.profileInfo {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.profileCard {
+    background: var(--white);
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.profileCard h3 {
+    grid-column: 1 / -1;
+    font-size: 1.75rem;
+    color: var(--text-dark);
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+}
+
+.profileCard p {
+    color: var(--text-muted);
+    margin: 0.5rem 0;
+    font-size: 1rem;
+}
+
+.profileCard p b {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.balanceBox {
+    background: linear-gradient(135deg, var(--primary-blue), #5e7cf0);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    color: var(--white);
+    text-align: center;
+    box-shadow: 0 10px 15px -3px rgba(50, 89, 232, 0.3);
+}
+
+.balanceBox h4 {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+}
+
+.balanceBox h2 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+/* Actions & Tabs Styling */
+.profileActions {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.actionTabs {
+    display: flex;
+    background: #f1f5f9;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.actionTabs button {
+    flex: 1;
+    padding: 1.25rem;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.actionTabs button:hover {
+    color: var(--primary-blue);
+    background: #e2e8f0;
+}
+
+.actionTabs button.active {
+    color: var(--primary-blue);
+    background: var(--white);
+    position: relative;
+}
+
+.actionTabs button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-blue);
+}
+
+.actionBody {
+    padding: 2.5rem;
+    min-height: 300px;
+}
+
+/* Transaction List Styling */
+.transactionList h4 {
+    margin: 0 0 1.5rem;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+.transactionItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.1s;
+}
+
+.transactionItem:last-child {
+    border-bottom: none;
+}
+
+.transactionItem:hover {
+    background: #f8fafc;
+}
+
+.transactionItem span:first-child {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.transactionItem.deposit span:first-child {
+    color: var(--success-green);
+    background: #ecfdf5;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.transactionItem.withdraw span:first-child {
+    color: var(--error-red);
+    background: #fef2f2;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.transactionItem span:nth-child(2) {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+.transactionItem small {
+    color: var(--text-muted);
+}
+
+/* Form Styling */
+.walletForm {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.walletForm h4 {
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.walletForm input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.walletForm input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+.walletForm button {
+    width: 100%;
+    padding: 0.875rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--white);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.walletForm .btn-success {
+    background-color: var(--success-green);
+}
+
+.walletForm .btn-success:hover {
+    background-color: #059669;
+}
+
+.walletForm .btn-danger {
+    background-color: var(--error-red);
+}
+
+.walletForm .btn-danger:hover {
+    background-color: #dc2626;
+}
+
+/* Responsive Scaling */
+@media (max-width: 768px) {
+    .profileCard {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+    }
+    .balanceBox {
+        margin-top: 1rem;
+    }
+    .actionBody {
+        padding: 1.5rem;
+    }
+}
