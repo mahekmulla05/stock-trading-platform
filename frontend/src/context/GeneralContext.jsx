@@ -1,143 +1,241 @@
-import { createContext, useState, useEffect } from "react";
+import React, { createContext, useState } from "react";
+import axiosInstance from "../components/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
-// The Context API allows us to share data (like user info) across the whole app
 export const GeneralContext = createContext();
 
-/**
- * GeneralContextProvider manages the application's global state,
- * specifically user authentication (login, registration, logout).
- */
 const GeneralContextProvider = ({ children }) => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [usertype, setUsertype] = useState("");
 
-  // We use the central API_URL from our config
+  const inputs = { username, email, usertype, password };
 
-
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Initialize mock data on load
-  useEffect(() => {
-    const existingUsers = localStorage.getItem("mockUsers");
-    if (!existingUsers) {
-      const initialUsers = [
-        {
-          _id: "mock_admin_1",
-          username: "AdminUser",
-          email: "admin@test.com",
-          password: "admin",
-          usertype: "admin",
-          balance: 0
-        },
-        {
-          _id: "mock_user_1",
-          username: "JohnDoe",
-          email: "john@test.com",
-          password: "password123",
-          usertype: "customer",
-          balance: 1500.50
-        },
-        {
-          _id: "mock_user_2",
-          username: "JaneSmith",
-          email: "jane@test.com",
-          password: "password123",
-          usertype: "customer",
-          balance: 2400.00
-        }
-      ];
-      localStorage.setItem("mockUsers", JSON.stringify(initialUsers));
-    }
-  }, []);
+const login = async () => {
+  try {
+    const loginInputs = { email, password };
+    console.log("Login inputs:", loginInputs);
 
-  /**
-   * login handles the user sign-in process (Mock).
-   */
-  const login = async (loginInputs) => {
-    try {
-      // Simulation of network delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+    const res = await axiosInstance.post("/login", loginInputs);
 
-      const { email, password } = loginInputs;
-      const mockUsers = JSON.parse(localStorage.getItem("mockUsers") || "[]");
-      const userFound = mockUsers.find(u => u.email === email && u.password === password);
+    localStorage.setItem("userId", res.data._id);
+    localStorage.setItem("userType", res.data.usertype);
+    localStorage.setItem("username", res.data.username);
+    localStorage.setItem("email", res.data.email);
+    localStorage.setItem("balance", res.data.balance);
 
-      if (!userFound) {
-        throw new Error("Invalid email or password");
-      }
-
-      // Store user details in localStorage so they stay logged in if the page refreshes
-      localStorage.setItem("userId", userFound._id);
-      localStorage.setItem("userType", userFound.usertype);
-      localStorage.setItem("username", userFound.username);
-      localStorage.setItem("email", userFound.email);
-
-      setUser(userFound);
+    if (res.data.usertype === "customer") {
       navigate("/home");
-    } catch (err) {
-      console.error("Login Error:", err);
-      alert(err.message || "Login failed! Please check your credentials.");
+    } else if (res.data.usertype === "admin") {
+      navigate("/admin");
     }
-  };
+  } catch (err) {
+    console.error("Login failed:", err);
+    alert("Login failed. Please check credentials.");
+  }
+};
 
-  /**
-   * register handles the creation of a new user account (Mock).
-   */
-  const register = async (inputs) => {
-    try {
-      // Simulation of network delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+const register = async () => {
+  try {
+    const res = await axiosInstance.post("/register", inputs);
 
-      const { username, email, password, usertype } = inputs;
-      const mockUsers = JSON.parse(localStorage.getItem("mockUsers") || "[]");
+    localStorage.setItem("userId", res.data._id);
+    localStorage.setItem("userType", res.data.usertype);
+    localStorage.setItem("username", res.data.username);
+    localStorage.setItem("email", res.data.email);
+    localStorage.setItem("balance", res.data.balance);
 
-      if (mockUsers.find(u => u.email === email)) {
-        throw new Error("Registration failed! Try a different email.");
-      }
-
-      const newUser = {
-        _id: Date.now().toString(),
-        username,
-        email,
-        password,
-        usertype: usertype || 'customer',
-        balance: 5000 // Default balance for new mock users
-      };
-
-      mockUsers.push(newUser);
-      localStorage.setItem("mockUsers", JSON.stringify(mockUsers));
-
-      // After registering, we automatically log them in
-      localStorage.setItem("userId", newUser._id);
-      localStorage.setItem("userType", newUser.usertype);
-      localStorage.setItem("username", newUser.username);
-      localStorage.setItem("email", newUser.email);
-
-      setUser(newUser);
+    if (res.data.usertype === "customer") {
       navigate("/home");
-    } catch (err) {
-      console.error("Registration Error:", err);
-      alert(err.message || "Registration failed! Try a different email.");
+    } else if (res.data.usertype === "admin") {
+      navigate("/admin");
     }
-  };
+  } catch (err) {
+    // This will now log the actual error message from the server
+    console.error("Registration Error Details:", err.response?.data || err.message);
+    alert("Registration failed: " + (err.response?.data?.message || "Internal Server Error"));
+  }
+}; // Closed properly here
 
-  /**
-   * logout clears all user data (Mock).
-   */
+
+//   const register = async () => {
+//   try {
+//     const res = await axiosInstance.post("/register", inputs);
+
+//     localStorage.setItem("userId", res.data._id);
+//     localStorage.setItem("userType", res.data.usertype);
+//     localStorage.setItem("username", res.data.username);
+//     localStorage.setItem("email", res.data.email);
+//     localStorage.setItem("balance", res.data.balance);
+
+//     if (res.data.usertype === "customer") {
+//       navigate("/home");
+//     } else if (res.data.usertype === "admin") {
+//       navigate("/admin");
+//     } 
+//    } catch (err) {
+//   console.error("Registration failed:", err.response?.data || err.message);
+//   alert("Registration failed");
+//   }
+// };
+
+
   const logout = async () => {
-    // Always clear local data and redirect
-    const mockUsers = localStorage.getItem("mockUsers"); // Keep the "database"
-    localStorage.clear();
-    if (mockUsers) localStorage.setItem("mockUsers", mockUsers); // Restore the "database"
-    setUser(null);
-    navigate("/");
+    axiosInstance
+      .post("/logout")
+      .then(() => {
+        localStorage.clear();
+        for (let key in localStorage) {
+          if (localStorage.hasOwnProperty(key)) {
+            localStorage.removeItem(key);
+          }
+        }
+
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
-    <GeneralContext.Provider value={{ login, register, logout, user, setUser }}>
+    <GeneralContext.Provider
+      value={{
+        login,
+        register,
+        logout,
+        username,
+        setUsername,
+        email,
+        setEmail,
+        password,
+        setPassword,
+        usertype,
+        setUsertype,
+      }}
+    >
       {children}
     </GeneralContext.Provider>
   );
 };
 
 export default GeneralContextProvider;
+
+
+
+
+// import { createContext, useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import axios from "axios";
+
+// export const GeneralContext = createContext();
+
+// const API_URL = "http://localhost:6001";
+
+// const GeneralContextProvider = ({ children }) => {
+
+//   const [user, setUser] = useState(null);
+//   const navigate = useNavigate();
+
+//   // Restore session
+//   useEffect(() => {
+//     const storedUser = localStorage.getItem("user");
+
+//     if (storedUser && storedUser !== "undefined") {
+//       try {
+//         setUser(JSON.parse(storedUser));
+//       } catch (err) {
+//         console.error("User parse error", err);
+//         localStorage.removeItem("user");
+//       }
+//     }
+//   }, []);
+
+//   // LOGIN
+//   const login = async (loginInputs) => {
+//     try {
+
+//       const res = await axios.post(`${API_URL}/api/users/login`, loginInputs);
+
+//       const userData = res.data.user || res.data;
+
+//       localStorage.setItem("user", JSON.stringify(userData));
+//       localStorage.setItem("userType", userData.usertype);
+
+//       setUser(userData);
+
+//       if (userData.usertype === "admin") {
+//         navigate("/admin");
+//       } else {
+//         navigate("/home");
+//       }
+
+//       return userData;
+
+//     } catch (err) {
+
+//       console.error("Login Error:", err);
+
+//       alert(
+//         err.response?.data?.message ||
+//         "Login failed! Please check credentials."
+//       );
+//     }
+//   };
+
+//   // REGISTER
+//   const register = async (inputs) => {
+//     try {
+
+//       const res = await axios.post(`${API_URL}/api/users/register`, inputs);
+
+//       const userData = res.data.user;
+
+//       localStorage.setItem("user", JSON.stringify(userData));
+//       localStorage.setItem("userType", userData.usertype);
+
+//       setUser(userData);
+
+//       navigate("/home");
+
+//     } catch (err) {
+
+//       console.error("Registration Error:", err);
+
+//       alert(
+//         err.response?.data?.message ||
+//         "Registration failed!"
+//       );
+//     }
+//   };
+
+//   // LOGOUT
+//   const logout = () => {
+
+//     localStorage.removeItem("user");
+//     localStorage.removeItem("userType");
+
+//     setUser(null);
+
+//     navigate("/");
+//   };
+
+//   return (
+//     <GeneralContext.Provider
+//       value={{
+//         user,
+//         setUser,
+//         login,
+//         register,
+//         logout
+//       }}
+//     >
+//       {children}
+//     </GeneralContext.Provider>
+//   );
+// };
+
+// export default GeneralContextProvider;
